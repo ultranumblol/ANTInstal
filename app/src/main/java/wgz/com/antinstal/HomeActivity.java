@@ -1,5 +1,6 @@
 package wgz.com.antinstal;
 
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
@@ -97,15 +98,20 @@ public class HomeActivity extends BaseActivity {
         switch (view.getId()) {
             case R.id.bar1:
                 viewpager.setCurrentItem(0);
+                toolbar.setTitle("业务消息");
                 break;
             case R.id.bar2:
                 viewpager.setCurrentItem(1);
+                toolbar.setTitle("订单查询");
                 break;
             case R.id.bar3:
                 viewpager.setCurrentItem(2);
+                toolbar.setTitle("地图导航");
+
                 break;
             case R.id.bar4:
                 viewpager.setCurrentItem(3);
+                toolbar.setTitle("个人主页");
                 break;
         }
     }
