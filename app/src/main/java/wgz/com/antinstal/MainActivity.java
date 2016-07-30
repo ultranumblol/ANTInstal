@@ -15,8 +15,8 @@ import wgz.com.antinstal.base.BaseFragment;
 public class MainActivity extends BaseActivity {
 
 
-    @Bind(R.id.app_bar_image)
-    ImageView appBarImage;
+   /* @Bind(R.id.app_bar_image)
+    ImageView appBarImage;*/
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     @Bind(R.id.id_colltoollayout)
