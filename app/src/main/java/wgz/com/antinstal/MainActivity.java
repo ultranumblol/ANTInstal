@@ -19,8 +19,7 @@ public class MainActivity extends BaseActivity {
     ImageView appBarImage;*/
     @Bind(R.id.toolbar)
     Toolbar toolbar;
-    @Bind(R.id.id_colltoollayout)
-    CollapsingToolbarLayout idColltoollayout;
+
     @Bind(R.id.appbar)
     AppBarLayout appbar;
 
@@ -41,11 +40,10 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void initView() {
-        toolbar.setTitle("警务APP");
+       // toolbar.setTitle("警务APP");
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(Color.WHITE);
-        idColltoollayout.setCollapsedTitleTextColor(Color.WHITE);
-        idColltoollayout.setExpandedTitleColor(Color.WHITE);
+        toolbar.setTitle("警务APP");
         //StatusBarUtil.setColor(this,R.color.colorPrimaryDark);
         // StatusBarUtil.setTranslucent(this,100);
         afterCreat();
