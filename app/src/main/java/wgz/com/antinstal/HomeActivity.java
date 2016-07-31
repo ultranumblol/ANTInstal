@@ -1,6 +1,5 @@
 package wgz.com.antinstal;
 
-import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
@@ -11,12 +10,10 @@ import android.widget.ImageView;
 import java.util.ArrayList;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import wgz.com.antinstal.adapter.MyFragmentPagerAdapter;
 import wgz.com.antinstal.base.BaseActivity;
 import wgz.com.antinstal.base.BaseFragment;
-import wgz.com.antinstal.fragment.MapFragment;
 import wgz.com.antinstal.fragment.MapFragment2;
 import wgz.com.antinstal.fragment.MsgFragment;
 import wgz.com.antinstal.fragment.OrderFragment;
@@ -25,7 +22,6 @@ import wgz.com.antinstal.view.CustomViewPager;
 
 public class HomeActivity extends BaseActivity {
     private MsgFragment msgFragment;
-    private MapFragment mapFragment;
     private PersonFragment personFragment;
     private OrderFragment orderFragment;
     private MapFragment2 mapFragment2;
@@ -66,7 +62,6 @@ public class HomeActivity extends BaseActivity {
     public void initView() {
         toolbar.setTitle("业务消息");
         msgFragment = new MsgFragment();
-        mapFragment = new MapFragment();
         orderFragment = new OrderFragment();
         personFragment = new PersonFragment();
         mapFragment2 = new MapFragment2();
@@ -83,7 +78,7 @@ public class HomeActivity extends BaseActivity {
 
 
         viewpager.setCurrentItem(0);
-
+        bar1.setImageResource(R.drawable.foot_letter_pressed);
     }
 
     @Override
@@ -95,23 +90,47 @@ public class HomeActivity extends BaseActivity {
 
     @OnClick({R.id.bar1, R.id.bar2, R.id.bar3, R.id.bar4})
     public void onClick(View view) {
+        bar1.setImageResource(R.drawable.foot_letter_normal);
+        bar2.setImageResource(R.drawable.foot_position_normal);
+        bar3.setImageResource(R.drawable.foot_ask_normal);
+        bar4.setImageResource(R.drawable.foot_myself_normal);
+
+
         switch (view.getId()) {
             case R.id.bar1:
                 viewpager.setCurrentItem(0);
                 toolbar.setTitle("业务消息");
+                bar1.setImageResource(R.drawable.foot_letter_pressed);
+                bar2.setImageResource(R.drawable.foot_position_normal);
+                bar3.setImageResource(R.drawable.foot_ask_normal);
+                bar4.setImageResource(R.drawable.foot_myself_normal);
+
                 break;
             case R.id.bar2:
                 viewpager.setCurrentItem(1);
                 toolbar.setTitle("订单查询");
+                bar1.setImageResource(R.drawable.foot_letter_normal);
+                bar2.setImageResource(R.drawable.foot_position_pressed);
+                bar3.setImageResource(R.drawable.foot_ask_normal);
+                bar4.setImageResource(R.drawable.foot_myself_normal);
                 break;
             case R.id.bar3:
                 viewpager.setCurrentItem(2);
                 toolbar.setTitle("地图导航");
+                bar1.setImageResource(R.drawable.foot_letter_normal);
+                bar2.setImageResource(R.drawable.foot_position_normal);
+                bar3.setImageResource(R.drawable.foot_ask_pressed);
+                bar4.setImageResource(R.drawable.foot_myself_normal);
+                toolbar.hideOverflowMenu();
 
                 break;
             case R.id.bar4:
                 viewpager.setCurrentItem(3);
                 toolbar.setTitle("个人主页");
+                bar1.setImageResource(R.drawable.foot_letter_normal);
+                bar2.setImageResource(R.drawable.foot_position_normal);
+                bar3.setImageResource(R.drawable.foot_ask_normal);
+                bar4.setImageResource(R.drawable.foot_myself_pressed);
                 break;
         }
     }

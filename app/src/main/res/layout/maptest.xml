@@ -1,13 +1,259 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent" >
 
-    <TextView
-        android:text="TextView"
+        <com.baidu.mapapi.map.MapView
+            android:id="@+id/map"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:clickable="true" />
+
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignWithParentIfMissing="false"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dip"
+            android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/customicon"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginTop="10dip"
+                android:layout_weight="1.0"
+                android:visibility="gone"
+                android:onClick="changeRouteIcon"
+                android:text="自定义起终点图标" />
+        </LinearLayout>
+
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignWithParentIfMissing="false"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="false"
+            android:layout_marginBottom="10dip" >
+
+            <Button
+                android:id="@+id/pre"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="2dip"
+                android:layout_marginRight="2dip"
+                android:layout_weight="1.0"
+                android:visibility="gone"
+                android:onClick="nodeClick" />
+
+            <Button
+                android:id="@+id/next"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="2dip"
+                android:layout_marginRight="2dip"
+                android:layout_weight="1.0"
+                android:visibility="gone"
+                android:onClick="nodeClick" />
+        </LinearLayout>
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="50dp"
+            android:id="@+id/id_searchMap_btn"
+            app:fabSize="mini"
+            android:src="@drawable/ic_location_searching_white_24dp"
+
+            />
+
+    </RelativeLayout>
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textView"
-        tools:text="maptest" />
-</LinearLayout>
+        android:orientation="vertical"
+        android:id="@+id/layout_mapsearch"
+        android:visibility="gone"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/colorPrimary"
+            android:gravity="center_horizontal"
+
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="公交线路"
+                android:textSize="14dp"
+                android:background="@drawable/bgblack_radios3"
+                android:padding="3dp"
+                android:id="@+id/transit"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/white"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="自驾线路"
+                android:background="@drawable/bgwrite_radios3"
+                android:layout_marginTop="5dp"
+                android:textSize="14dp"
+                android:id="@+id/drive"
+                android:textColor="@color/black"
+                android:padding="3dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="步行线路"
+                android:textSize="14dp"
+                android:background="@drawable/bgblack_radios3"
+                android:padding="3dp"
+                android:id="@+id/walkway"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/white"
+                />
+
+
+        </LinearLayout>
+        <LinearLayout
+
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal" >
+
+
+            <LinearLayout android:layout_width="220dp"
+                android:layout_height="25dip"
+                android:layout_marginTop="3dp"
+
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bordergray_table_topradius_ontrans"
+
+                >
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dip"
+                    android:background="@null"
+                    android:ems="10"
+
+                    android:id="@+id/start"
+                    android:hint="起点"
+
+
+
+                    android:singleLine="true" >
+
+                    <requestFocus />
+                </EditText>
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal" >
+
+
+            <LinearLayout android:layout_width="220dp"
+                android:layout_height="25dip"
+                android:orientation="horizontal"
+                android:layout_marginBottom="6dp"
+                android:gravity="center_vertical"
+                android:background="@drawable/bordergray_tablen_bottomradius_ontrans"
+
+                >
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dip"
+                    android:background="@null"
+                    android:ems="10"
+                    android:hint="终点"
+                    android:id="@+id/end"
+                    android:singleLine="true" >
+
+                    <requestFocus />
+                </EditText>
+
+            </LinearLayout>
+
+
+            <requestFocus />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dip"
+        android:layout_marginTop="5dip"
+        android:visibility="gone"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/drive2"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="2dip"
+            android:layout_marginRight="2dip"
+            android:layout_weight="1.0"
+
+
+            android:text="驾车搜索" />
+
+        <Button
+            android:id="@+id/transit2"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="2dip"
+            android:layout_marginRight="2dip"
+            android:layout_weight="1.0"
+
+
+            android:text="公交搜索" />
+
+        <Button
+            android:id="@+id/walk"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="2dip"
+            android:layout_marginRight="2dip"
+            android:layout_weight="1.0"
+
+
+            android:text="步行搜索" />
+    </LinearLayout>
+</FrameLayout>

@@ -34,6 +34,7 @@ import wgz.com.antinstal.R;
 import wgz.com.antinstal.adapter.OrderAdapter;
 import wgz.com.antinstal.app;
 import wgz.com.antinstal.util.OnDataFinishedListener;
+import wgz.com.antinstal.util.SignMaker;
 import wgz.com.antinstal.view.RefreshableView;
 import wgz.com.antinstal.xmlpraser.InputStreamCallBack;
 import wgz.com.antinstal.xmlpraser.ParserWorkerXml;
@@ -162,7 +163,10 @@ public class OrderFragment extends Fragment {
         return flag;
     }
     private void initData2() {
-        retrofit2.Call<ResponseBody> call = app.apiService.getWorkXML("18108055465","2","97C7F5D5BE3B362093CB0E97EEFF7BD1");
+        SignMaker signMaker = new SignMaker();
+        String sign =signMaker.getsign(getsp2(),2);
+
+        retrofit2.Call<ResponseBody> call = app.apiService.getWorkXML(getsp2(),"2",sign);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(retrofit2.Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -212,7 +216,10 @@ public class OrderFragment extends Fragment {
     }
 
     private void initData() {
-        retrofit2.Call<ResponseBody> call = app.apiService.getWorkXML("18108055465","1","BE3299DB5077FEED1882FF80363A02C5");
+        SignMaker signMaker = new SignMaker();
+        String sign =signMaker.getsign(getsp2(),2);
+
+        retrofit2.Call<ResponseBody> call = app.apiService.getWorkXML(getsp2(),"1",sign);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(retrofit2.Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -241,28 +248,6 @@ public class OrderFragment extends Fragment {
 
             }
         });
-
-
-
-      /*  OkHttpUtils.get().url(app.BASE_URL).addParams("username","18108055465")
-                .addParams("state","1").addParams("sign","BE3299DB5077FEED1882FF80363A02C5").build()
-                .execute(new InputStreamCallBack() {
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-
-                    }
-
-                    @Override
-                    public void onResponse(InputStream response, int id) {
-                        inputStream1 = response;
-
-
-                    }
-                });*/
-
-
-
-
     }
     //根据workID对list排序
     public void sort(List<Map<String, Object>> list) {

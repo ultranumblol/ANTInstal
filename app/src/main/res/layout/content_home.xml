@@ -36,36 +36,40 @@
 
                 >
                 <ImageView
+
                     android:id="@+id/bar1"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:onClick="BaronClick"
-                    android:src="@mipmap/ic_launcher"
+                    android:src="@drawable/foot_letter_normal"
                     />
                 <ImageView
+
                     android:id="@+id/bar2"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:onClick="BaronClick"
-                    android:src="@mipmap/ic_launcher"
+                    android:src="@drawable/foot_position_normal"
                     />
                 <ImageView
+
                     android:id="@+id/bar3"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:onClick="BaronClick"
-                    android:src="@mipmap/ic_launcher"
+                    android:src="@drawable/foot_ask_normal"
                     />
                 <ImageView
+
                     android:id="@+id/bar4"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
                     android:onClick="BaronClick"
-                    android:src="@mipmap/ic_launcher"
+                    android:src="@drawable/foot_myself_normal"
                     />
             </LinearLayout>
 

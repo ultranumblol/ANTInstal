@@ -54,9 +54,10 @@ public class MsgFragment extends Fragment {
     private void initData() {
 
         SignMaker signMaker = new SignMaker();
-        String sign = signMaker.getsign("18108055465",0);
+        String username = getsp2();
+        String sign = signMaker.getsign(username,0);
 
-        Call<ResponseBody> call = app.apiService.getWorkXML("18108055465","0",sign);
+        Call<ResponseBody> call = app.apiService.getWorkXML(username,"0",sign);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -76,7 +77,7 @@ public class MsgFragment extends Fragment {
                     @Override
                     public void onDataFailed() {
                         msglv.setAdapter(new MsgFmtAdapter(listDATE,getContext()));
-                        Toast.makeText(getActivity(),"没有相关业务!",Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getActivity(),"没有相关业务!",Toast.LENGTH_SHORT).show();
                     }
                 });
             }

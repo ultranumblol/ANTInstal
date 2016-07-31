@@ -2,10 +2,72 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <TextView
-        android:text="mapfragment"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView5" />
+        android:layout_height="48dp"
+        android:background="@color/colorPrimary"
+
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:id="@+id/map2_back"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="18dp"
+                android:src="@drawable/back2"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/order_back_img"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="返回"
+
+                android:textSize="16dp"
+                android:textColor="@color/white"
+                android:layout_centerVertical="true"
+
+                />
+
+        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="18dp"
+            android:layout_centerInParent="true"
+            android:text="地图"
+
+
+            />
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="25dp"
+            android:src="@drawable/bar33"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="8dp"
+            android:id="@+id/mylocation"
+            />
+        <ImageView
+            android:layout_width="27dp"
+            android:layout_height="30dp"
+            android:id="@+id/outmap"
+            android:layout_toLeftOf="@+id/mylocation"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/ic_location_searching_white_18dp"
+            />
+    </RelativeLayout>
+    <com.baidu.mapapi.map.MapView
+        android:id="@+id/map2"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:clickable="true" />
 </LinearLayout>

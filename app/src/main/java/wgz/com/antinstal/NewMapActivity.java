@@ -1,0 +1,655 @@
+package wgz.com.antinstal;
+
+import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.location.LocationManager;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BitmapDescriptor;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.MapStatusUpdate;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
+import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.MarkerOptions;
+import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.navi.BaiduMapNavigation;
+import com.baidu.mapapi.navi.NaviParaOption;
+import com.baidu.mapapi.search.core.RouteLine;
+import com.baidu.mapapi.search.core.SearchResult;
+import com.baidu.mapapi.search.geocode.GeoCodeOption;
+import com.baidu.mapapi.search.geocode.GeoCodeResult;
+import com.baidu.mapapi.search.geocode.GeoCoder;
+import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
+import com.baidu.mapapi.search.route.BikingRouteResult;
+import com.baidu.mapapi.search.route.DrivingRouteResult;
+import com.baidu.mapapi.search.route.OnGetRoutePlanResultListener;
+import com.baidu.mapapi.search.route.PlanNode;
+import com.baidu.mapapi.search.route.RoutePlanSearch;
+import com.baidu.mapapi.search.route.TransitRouteResult;
+import com.baidu.mapapi.search.route.WalkingRoutePlanOption;
+import com.baidu.mapapi.search.route.WalkingRouteResult;
+import com.baidu.mapapi.utils.OpenClientUtil;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import wgz.com.antinstal.base.BaseActivity;
+import wgz.com.antinstal.base.BaseFragment;
+import wgz.com.antinstal.overlayutil.DrivingRouteOverlay;
+import wgz.com.antinstal.overlayutil.OverlayManager;
+import wgz.com.antinstal.overlayutil.TransitRouteOverlay;
+import wgz.com.antinstal.overlayutil.WalkingRouteOverlay;
+
+/**
+ * Created by qwerr on 2015/12/28.
+ */
+public class NewMapActivity extends BaseActivity implements OnGetRoutePlanResultListener,OnGetGeoCoderResultListener {
+    MapView mMapView = null;
+    private BaiduMap mBaiduMap;
+    private LinearLayout back;
+    private ImageView mylocation,outmap;
+    private List<Map<String,Object>> data;
+    //定位相关
+    private LocationClient mLocationClient;
+    private  MyLocationListener mLocationlistener;
+    private  boolean isFirstin = true;
+    private double mLatitude,mLongtitude, mLatitude2,mLongtitude2;
+    private Context context;
+    private String myLocation;
+    private String endaddress;
+    private PopupWindow popupWindow;
+    GeoCoder msearch2 = null; // 搜索模块，也可去掉地图模块独立使用
+
+    //路线相关
+    RouteLine route = null;
+    OverlayManager routeOverlay = null;
+    boolean useDefaultIcon = false;
+    //搜索相关
+    RoutePlanSearch mSearch = null;    // 搜索模块，也可去掉地图模块独立使用
+    @Override
+    public int getLayoutId() {
+        return R.layout.mapfragment;
+    }
+
+    @Override
+    protected BaseFragment getFirstFragment() {
+        return null;
+    }
+
+    @Override
+    protected int getFragmentContentId() {
+        return 0;
+    }
+
+    @Override
+    public void initView() {
+        this.context = this;
+        initview();
+
+        if (isOPen(this)){
+            initLocation();
+            initsearch();
+        }if (!isOPen(this)){
+            Toast.makeText(this,"请打开GPS定位功能！",Toast.LENGTH_LONG).show();
+            openGPS(this);
+
+        }
+    }
+
+    private void initsearch() {
+        Intent intent = getIntent();
+        endaddress = intent.getStringExtra("endAddress");
+        mSearch = RoutePlanSearch.newInstance();
+        mSearch.setOnGetRoutePlanResultListener(this);
+        //重置浏览节点的路线数据
+        route = null;
+        mBaiduMap.clear();
+        GERSearch();
+        // 处理搜索按钮响应
+        //设置起终点信息，对于tranist search 来说，城市名无意义
+       /* PlanNode stNode = PlanNode.withCityNameAndPlaceName("成都", myLocation);
+        PlanNode enNode = PlanNode.withCityNameAndPlaceName("成都", endaddress);
+
+        mSearch.walkingSearch((new WalkingRoutePlanOption())
+                .from(stNode)
+                .to(enNode));*/
+        //坐标搜索
+       /* LatLng latLng = new LatLng(mLatitude,mLongtitude);
+        LatLng latLng2 = new LatLng(mLatitude2,mLongtitude2);
+        PlanNode stNode2 = PlanNode.withLocation(latLng);
+        PlanNode enNode2 = PlanNode.withLocation(latLng2);
+
+        PlanNode stNode = PlanNode.withCityNameAndPlaceName("成都", myLocation);
+        PlanNode enNode = PlanNode.withCityNameAndPlaceName("成都", endaddress);
+
+        mSearch.walkingSearch((new WalkingRoutePlanOption())
+                .from(stNode2)
+                .to(enNode2));*/
+
+    }
+
+    private void initLocation() {
+        mLocationClient = new LocationClient(this);
+        mLocationlistener = new MyLocationListener();
+        mLocationClient.registerLocationListener(mLocationlistener);
+        LocationClientOption option = new LocationClientOption();
+        option.setCoorType("bd09ll");
+        option.setIsNeedAddress(true);
+        option.setOpenGps(true);
+        option.setScanSpan(1000);
+        mLocationClient.setLocOption(option);
+        if (!mLocationClient.isStarted()){
+
+            mLocationClient.start();
+
+        }
+    }
+
+private void GERSearch(){
+    msearch2.geocode(new GeoCodeOption().city(
+            "成都").address(endaddress));
+
+
+}
+    private void initview() {
+        outmap = (ImageView) findViewById(R.id.outmap);
+        back = (LinearLayout) findViewById(R.id.map2_back);
+        mylocation = (ImageView) findViewById(R.id.mylocation);
+        mMapView = (MapView)findViewById(R.id.map2);
+        mBaiduMap = mMapView.getMap();
+        // 初始化搜索模块，注册事件监听
+        msearch2 = GeoCoder.newInstance();
+        msearch2.setOnGetGeoCodeResultListener(this);
+
+        outmap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPopupWindow(-126, 24);
+            }
+        });
+
+
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        mylocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CenterToMyLocation();
+
+            }
+        });
+        data = new ArrayList<Map<String,Object>>();
+        Map<String,Object> map = new HashMap<>();
+        map.put("name","百度地图");
+        data.add(map);
+        Map<String,Object> map2 = new HashMap<>();
+        map2.put("name","高德地图");
+        data.add(map2);
+
+    }
+
+    private void showPopupWindow(int xoff, int yoff) {
+
+
+        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, new String[] { "百度地图", "高德地图" });
+        ListView listview = new ListView(this);
+        listview.setAdapter(new SimpleAdapter(getApplicationContext(),data,R.layout.popitem,new String[]{"name"},new int[]{R.id.id_popitem}));
+        popupWindow = new PopupWindow(this);
+        //popupWindow.setHeight(160);
+        popupWindow.setHeight(LinearLayout.LayoutParams.WRAP_CONTENT);
+        popupWindow.setWidth(180);
+        popupWindow.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.parseColor("#ffffff")));
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setFocusable(true);
+        popupWindow.setContentView(listview);
+        popupWindow.showAsDropDown(outmap, xoff, yoff);
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                TextView name = (TextView) view.findViewById(R.id.id_popitem);
+                switch (name.getText().toString()){
+                    case "百度地图":
+                        StartBaidu();
+
+                        break;
+                    case "高德地图":
+
+
+                        break;
+                    default:
+                        break;
+
+                }
+            }
+        });
+
+    }
+
+
+    private void StartBaidu(){
+// 构建 导航参数
+// 天安门坐标
+        double mLat1 = mLatitude;
+        double mLon1 = mLatitude;
+// 百度大厦坐标
+        double mLat2 = mLatitude2;
+        double mLon2 = mLatitude2;
+        LatLng pt1 = new LatLng(mLat1, mLon1);
+        LatLng pt2 = new LatLng(mLat2, mLon2);
+
+        // 构建 route搜索参数（百度地图demo）
+
+        //自己写的
+        NaviParaOption para = new NaviParaOption()
+                .startPoint(pt1).endPoint(pt2);
+                //.startName(myLocation).endName(endaddress);
+
+        try {
+// 调起百度地图步行导航
+            BaiduMapNavigation.openBaiduMapWalkNavi(para, this);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showDialog();
+
+        }
+
+    }
+
+    /**
+     * 提示未安装百度地图app或app版本过低
+     *
+     */
+    public void showDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("您尚未安装百度地图app或app版本过低，点击确认安装？");
+        builder.setTitle("提示");
+        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                /**
+                 * OpenClientUtil:调起百度客户端工具类
+                 *
+                 * public static int getBaiduMapVersion(Context context)
+                 * 获取百度地图客户端版本号
+                 * 返回0代表没有安装百度地图客户端
+                 * */
+                OpenClientUtil.getLatestBaiduMapApp(NewMapActivity.this);
+            }
+        });
+
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.create().show();
+
+    }
+    /**
+     * 判断GPS是否开启，GPS或者AGPS开启一个就认为是开启的
+     * @param context
+     * @return true 表示开启
+     */
+    public static final boolean isOPen(final Context context) {
+        LocationManager locationManager
+                = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        // 通过GPS卫星定位，定位级别可以精确到街（通过24颗卫星定位，在室外和空旷的地方定位准确、速度快）
+        boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        // 通过WLAN或移动网络(3G/2G)确定的位置（也称作AGPS，辅助GPS定位。主要用于在室内或遮盖物（建筑群或茂密的深林等）密集的地方定位）
+        boolean network = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        if (gps || network) {
+            return true;
+        }
+
+        return false;
+    }
+    /**
+     * 强制帮用户打开GPS
+     * @param context
+     */
+    public static final void openGPS(Context context) {
+        Intent GPSIntent = new Intent();
+        GPSIntent.setClassName("com.android.settings",
+                "com.android.settings.widget.SettingsAppWidgetProvider");
+        GPSIntent.addCategory("android.intent.category.ALTERNATIVE");
+        GPSIntent.setData(Uri.parse("custom:3"));
+        try {
+            PendingIntent.getBroadcast(context, 0, GPSIntent, 0).send();
+        } catch (PendingIntent.CanceledException e) {
+            e.printStackTrace();
+        }
+    }
+
+ private class AsynSearch extends AsyncTask{
+     @Override
+     protected Object doInBackground(Object[] params) {
+         try {
+             Thread.sleep(2000);
+         } catch (InterruptedException e) {
+             e.printStackTrace();
+         }
+         return null;
+     }
+
+     @Override
+     protected void onPostExecute(Object o) {
+         CenterToMyLocation();
+     }
+ }
+    //定位到我的位置
+    private void CenterToMyLocation() {
+        LatLng latLng = new LatLng(mLatitude,mLongtitude);
+        LatLng latLng2 = new LatLng(mLatitude2,mLongtitude2);
+        MapStatusUpdate msu = MapStatusUpdateFactory.newLatLng(latLng);
+        mBaiduMap.animateMapStatus(msu);
+        //坐标搜索
+        PlanNode stNode2 = PlanNode.withLocation(latLng);
+        PlanNode enNode2 = PlanNode.withLocation(latLng2);
+        String strInfo = String.format("起点坐标纬度：%f 经度：%f",
+                mLatitude, mLongtitude);
+        String endInfo = String.format("终点坐标纬度：%f 经度：%f",
+                mLatitude2, mLongtitude2);
+
+        Log.i("baidu",strInfo);
+        Log.i("baidu",endInfo);
+        //PlanNode stNode = PlanNode.withCityNameAndPlaceName("成都", myLocation);
+        //PlanNode enNode = PlanNode.withCityNameAndPlaceName("成都", endaddress);
+
+        mSearch.walkingSearch((new WalkingRoutePlanOption())
+                .from(stNode2)
+                .to(enNode2));
+    }
+
+    @Override
+    public void onGetWalkingRouteResult(WalkingRouteResult result) {
+        if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+            Toast.makeText(NewMapActivity.this, "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
+        }
+        if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
+            //起终点或途经点地址有岐义，通过以下接口获取建议查询信息
+            //result.getSuggestAddrInfo()
+            return;
+        }
+        if (result.error == SearchResult.ERRORNO.NO_ERROR) {
+
+            // mBtnPre.setVisibility(View.VISIBLE);
+            // mBtnNext.setVisibility(View.VISIBLE);
+            route = result.getRouteLines().get(0);
+            WalkingRouteOverlay overlay = new MyWalkingRouteOverlay(mBaiduMap);
+            mBaiduMap.setOnMarkerClickListener(overlay);
+            routeOverlay = overlay;
+            overlay.setData(result.getRouteLines().get(0));
+            overlay.addToMap();
+            overlay.zoomToSpan();
+        }
+
+    }
+
+    @Override
+    public void onGetTransitRouteResult(TransitRouteResult result) {
+
+        if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+            Toast.makeText(NewMapActivity.this, "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
+        }
+        if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
+            //起终点或途经点地址有岐义，通过以下接口获取建议查询信息
+            //result.getSuggestAddrInfo()
+            return;
+        }
+        if (result.error == SearchResult.ERRORNO.NO_ERROR) {
+            route = result.getRouteLines().get(0);
+            TransitRouteOverlay overlay = new MyTransitRouteOverlay(mBaiduMap);
+            mBaiduMap.setOnMarkerClickListener(overlay);
+            routeOverlay = overlay;
+            overlay.setData(result.getRouteLines().get(0));
+            overlay.addToMap();
+            overlay.zoomToSpan();
+        }
+    }
+
+    @Override
+    public void onGetDrivingRouteResult(DrivingRouteResult result) {
+        if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+            Toast.makeText(NewMapActivity.this.getApplicationContext(), "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
+        }
+        if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
+            //起终点或途经点地址有岐义，通过以下接口获取建议查询信息
+            //result.getSuggestAddrInfo()
+            return;
+        }
+        if (result.error == SearchResult.ERRORNO.NO_ERROR) {
+            //mBtnPre.setVisibility(View.VISIBLE);
+            // mBtnNext.setVisibility(View.VISIBLE);
+            route = result.getRouteLines().get(0);
+            DrivingRouteOverlay overlay = new MyDrivingRouteOverlay(mBaiduMap);
+            routeOverlay = overlay;
+            mBaiduMap.setOnMarkerClickListener(overlay);
+            overlay.setData(result.getRouteLines().get(0));
+            overlay.addToMap();
+            overlay.zoomToSpan();
+        }
+    }
+
+    @Override
+    public void onGetBikingRouteResult(BikingRouteResult bikingRouteResult) {
+
+    }
+
+    @Override
+    public void onGetGeoCodeResult(GeoCodeResult geoCodeResult) {
+        if (geoCodeResult == null || geoCodeResult.error != SearchResult.ERRORNO.NO_ERROR) {
+            Toast.makeText(NewMapActivity.this, "抱歉，未能找到结果", Toast.LENGTH_LONG)
+                    .show();
+            return;
+        }
+        mBaiduMap.clear();
+//        mBaiduMap.addOverlay(new MarkerOptions().position(geoCodeResult.getLocation())
+//                .icon(BitmapDescriptorFactory
+//                        .fromResource(R.drawable.icon_marka)));
+        mBaiduMap.setMapStatus(MapStatusUpdateFactory.newLatLng(geoCodeResult
+                .getLocation()));
+        mLatitude2=geoCodeResult.getLocation().latitude;
+        mLongtitude2 = geoCodeResult.getLocation().longitude;
+        String strInfo = String.format("纬度：%f 经度：%f",
+                geoCodeResult.getLocation().latitude, geoCodeResult.getLocation().longitude);
+        //Toast.makeText(NewMapActivity.this, strInfo, Toast.LENGTH_LONG).show();
+
+
+    }
+
+    @Override
+    public void onGetReverseGeoCodeResult(ReverseGeoCodeResult reverseGeoCodeResult) {
+        if (reverseGeoCodeResult == null || reverseGeoCodeResult.error != SearchResult.ERRORNO.NO_ERROR) {
+            Toast.makeText(NewMapActivity.this, "抱歉，未能找到结果", Toast.LENGTH_LONG)
+                    .show();
+            return;
+        }
+        mBaiduMap.clear();
+        mBaiduMap.addOverlay(new MarkerOptions().position(reverseGeoCodeResult.getLocation())
+                .icon(BitmapDescriptorFactory
+                        .fromResource(R.drawable.icon_marka)));
+        mBaiduMap.setMapStatus(MapStatusUpdateFactory.newLatLng(reverseGeoCodeResult
+                .getLocation()));
+        Toast.makeText(NewMapActivity.this, reverseGeoCodeResult.getAddress(),
+                Toast.LENGTH_LONG).show();
+
+
+    }
+
+    private  class MyLocationListener implements BDLocationListener {
+        @Override
+        public void onReceiveLocation(BDLocation bdLocation) {
+            MyLocationData data =  new MyLocationData.Builder()
+                    .accuracy(bdLocation.getRadius()).latitude(bdLocation.getLatitude())
+                    .longitude(bdLocation.getLongitude()).build();
+
+
+
+            mBaiduMap.setMyLocationData(data);
+           // mLatitude = 30.67;
+           // mLongtitude = 104.06;
+            mLatitude = bdLocation.getLatitude();
+            mLongtitude =bdLocation.getLongitude();
+            myLocation = bdLocation.getAddrStr();
+
+            //Toast.makeText(context,myLocation,Toast.LENGTH_SHORT).show();
+            if (isFirstin){
+                //坐标
+               // LatLng latLng = new LatLng(30.67,104.06);
+                LatLng latLng = new LatLng(bdLocation.getLatitude(),bdLocation.getLongitude());
+                MapStatusUpdate msu = MapStatusUpdateFactory.newLatLng(latLng);
+                mBaiduMap.animateMapStatus(msu);
+                isFirstin = false;
+                Log.i("map","first!!!!");
+                //Toast.makeText(context,bdLocation.getAddrStr(),Toast.LENGTH_SHORT).show();
+
+
+
+            }
+
+        }
+    }
+    //定制RouteOverly
+    private class MyDrivingRouteOverlay extends DrivingRouteOverlay {
+
+        public MyDrivingRouteOverlay(BaiduMap baiduMap) {
+            super(baiduMap);
+        }
+
+        @Override
+        public BitmapDescriptor getStartMarker() {
+            if (useDefaultIcon) {
+                return BitmapDescriptorFactory.fromResource(R.drawable.icon_st);
+            }
+            return null;
+        }
+
+        @Override
+        public BitmapDescriptor getTerminalMarker() {
+            if (useDefaultIcon) {
+                return BitmapDescriptorFactory.fromResource(R.drawable.icon_en);
+            }
+            return null;
+        }
+    }
+    private class MyWalkingRouteOverlay extends WalkingRouteOverlay {
+
+        public MyWalkingRouteOverlay(BaiduMap baiduMap) {
+            super(baiduMap);
+        }
+
+        @Override
+        public BitmapDescriptor getStartMarker() {
+            if (useDefaultIcon) {
+                return BitmapDescriptorFactory.fromResource(R.drawable.icon_st);
+            }
+            return null;
+        }
+
+        @Override
+        public BitmapDescriptor getTerminalMarker() {
+            if (useDefaultIcon) {
+                return BitmapDescriptorFactory.fromResource(R.drawable.icon_en);
+            }
+            return null;
+        }
+    }
+
+    private class MyTransitRouteOverlay extends TransitRouteOverlay {
+
+        public MyTransitRouteOverlay(BaiduMap baiduMap) {
+            super(baiduMap);
+        }
+
+        @Override
+        public BitmapDescriptor getStartMarker() {
+            if (useDefaultIcon) {
+                return BitmapDescriptorFactory.fromResource(R.drawable.icon_st);
+            }
+            return null;
+        }
+
+        @Override
+        public BitmapDescriptor getTerminalMarker() {
+            if (useDefaultIcon) {
+                return BitmapDescriptorFactory.fromResource(R.drawable.icon_en);
+            }
+            return null;
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
+        mMapView.onDestroy();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
+        mMapView.onResume();
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //开启定位
+        mBaiduMap.setMyLocationEnabled(true);
+        AsynSearch search = new AsynSearch();
+        search.execute();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //停止定位
+        mBaiduMap.setMyLocationEnabled(false);
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理
+        mMapView.onPause();
+    }
+
+}

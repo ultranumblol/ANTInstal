@@ -2,6 +2,8 @@ package wgz.com.antinstal;
 
 import android.app.Application;
 
+import com.baidu.mapapi.SDKInitializer;
+
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -24,6 +26,7 @@ public class app extends Application {
     public void onCreate() {
         super.onCreate();
         mApp = this;
+        SDKInitializer.initialize(getApplicationContext());
         ToastUtil.isShow =true;
 
         LogUtil.isDebug=true;
@@ -34,6 +37,8 @@ public class app extends Application {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
+                .addConverterFactory(ScalarsConverterFactory.create())
+
                 .build();
 
         apiService = retrofit.create(ApiService.class);
