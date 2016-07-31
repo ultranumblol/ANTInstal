@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <android.support.design.widget.TabLayout
@@ -14,10 +15,34 @@
         app:tabTextColor="@color/gray3"
         app:tabMode="fixed"
         />
-    <TextView
-        android:text="orderfragment"
+    <wgz.com.antinstal.view.RefreshableView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView3"
-         />
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:id="@+id/refreshable_view2">
+
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="2dp"
+            android:id="@+id/untuotou_lv"></ListView>
+
+
+    </wgz.com.antinstal.view.RefreshableView>
+    <wgz.com.antinstal.view.RefreshableView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/refreshable_view3"
+        android:visibility="visible"
+        >
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="2dp"
+
+            android:id="@+id/tuotou_lv"></ListView>
+
+
+    </wgz.com.antinstal.view.RefreshableView>
 </LinearLayout>

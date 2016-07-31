@@ -5,6 +5,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import wgz.datatom.com.utillibrary.util.LogUtil;
+
 /**
  * 签名生成器
  * @author qwerr
@@ -130,7 +132,8 @@ public class SignMaker {
 
         pass.add(name);
         pass.add("state="+state);
-        Log.i("xml", "===========" + pass.toString());
+        LogUtil.e("签名"+pass.toString());
+       // Log.i("xml", "===========" + pass.toString());
         Collections.sort(pass);//对数组里的元素按首字母排序
         String result = "";
         String seprater = "&";
@@ -138,7 +141,8 @@ public class SignMaker {
             result=pass.get(0)+seprater+pass.get(1);
         }
         String sign1=md5Util.MD5(result);
-        Log.i("xml", "加密内容：" + result + "加密后" + sign1);
+       // Log.i("xml", "加密内容：" + result + "加密后" + sign1);
+        LogUtil.e("加密内容：" + result + "加密后" + sign1);
         return sign1;
 
 
