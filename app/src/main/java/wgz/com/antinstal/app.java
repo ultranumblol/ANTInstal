@@ -34,6 +34,8 @@ public class app extends Application {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
+                .addConverterFactory(ScalarsConverterFactory.create())
+
                 .build();
 
         apiService = retrofit.create(ApiService.class);
