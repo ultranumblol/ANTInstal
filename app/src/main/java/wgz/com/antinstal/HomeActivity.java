@@ -1,5 +1,6 @@
 package wgz.com.antinstal;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,7 @@ import wgz.com.antinstal.fragment.MapFragment2;
 import wgz.com.antinstal.fragment.MsgFragment;
 import wgz.com.antinstal.fragment.OrderFragment;
 import wgz.com.antinstal.fragment.PersonFragment;
+import wgz.com.antinstal.service.GetGPSService;
 import wgz.com.antinstal.view.CustomViewPager;
 
 public class HomeActivity extends BaseActivity {
@@ -60,6 +62,7 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     public void initView() {
+        startService(new Intent(HomeActivity.this, GetGPSService.class));
         toolbar.setTitle("业务消息");
         msgFragment = new MsgFragment();
         orderFragment = new OrderFragment();

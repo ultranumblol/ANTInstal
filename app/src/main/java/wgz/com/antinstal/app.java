@@ -1,6 +1,7 @@
 package wgz.com.antinstal;
 
 import android.app.Application;
+import android.content.Intent;
 
 import com.baidu.mapapi.SDKInitializer;
 
@@ -11,6 +12,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 import wgz.com.antinstal.exception.LocalFileHandler;
 import wgz.com.antinstal.service.ApiService;
+import wgz.com.antinstal.service.GetGPSService;
 import wgz.datatom.com.utillibrary.util.LogUtil;
 import wgz.datatom.com.utillibrary.util.ToastUtil;
 
@@ -28,7 +30,6 @@ public class app extends Application {
         mApp = this;
         SDKInitializer.initialize(getApplicationContext());
         ToastUtil.isShow =true;
-
         LogUtil.isDebug=true;
 
         //配置程序异常退出处理

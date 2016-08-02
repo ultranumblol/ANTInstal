@@ -53,6 +53,7 @@
         <activity android:name=".NewMapActivity"
             android:theme="@style/AppTheme.NoActionBar_notrans"
             ></activity>
+        <service android:name=".service.GetGPSService"></service>
     </application>
 
 </manifest>
