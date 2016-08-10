@@ -147,6 +147,7 @@ public class LoginActivity extends BaseActivity {
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
+                LogUtil.e("error:"+ t.toString());
 
             }
         });
