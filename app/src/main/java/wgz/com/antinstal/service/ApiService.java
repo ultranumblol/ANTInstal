@@ -26,6 +26,13 @@ public interface ApiService {
     Call<ResponseBody> getWorkXML(@Field("username") String username,
                                   @Field("state") String state,
                                   @Field("sign") String sign);
+    @FormUrlEncoded
+    @POST("http://wuliu.chinaant.com/AppDespacthingInfo.aspx")
+    Call<String> getWorkXMLStr(@Field("username") String username,
+                                  @Field("state") String state,
+                                  @Field("sign") String sign);
+
+
 
     //更新信息
     @FormUrlEncoded
@@ -65,5 +72,28 @@ public interface ApiService {
                            @Field("Longitude") String longitude,
                            @Field("latitude") String latitude);
 
+    @GET("http://erp.chinaant.com/AppServiceError.aspx")
+    Call<ResponseBody> getError();
+
+
+    @FormUrlEncoded
+    @POST("http://erp.chinaant.com/AppInstallationEDI.aspx")
+    Call<String> finishOrder(@Field("id") String id,
+                             @Field("type") String type,
+                             @Field("state") String state,
+                             @Field("code") String code,
+                             @Field("remark") String remark,
+                             @Field("username") String username,
+                             @Field("sign") String sign);
+
+    @FormUrlEncoded
+    @POST("http://erp.chinaant.com/AppInstallationEDI.aspx")
+    Call<String >  unFinishOrder(@Field("id") String id,
+                                 @Field("type") String type,
+                                 @Field("state") String state,
+                                 @Field("remark") String remark,
+                                 @Field("errorid") String errorid,
+                                 @Field("username") String username,
+                                 @Field("sign") String sign);
 
 }

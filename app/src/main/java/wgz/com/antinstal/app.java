@@ -22,7 +22,7 @@ import wgz.datatom.com.utillibrary.util.ToastUtil;
 
 public class app extends Application {
     private static app mApp;
-    public static final String BASE_URL = "http://erp.chinaant.com/";
+    public static final String BASE_URL = "http://wuliu.chinaant.com/";
     public static  ApiService apiService;
     @Override
     public void onCreate() {
