@@ -38,6 +38,7 @@ import wgz.com.antinstal.util.SignMaker;
 import wgz.com.antinstal.view.RefreshableView;
 import wgz.com.antinstal.xmlpraser.InputStreamCallBack;
 import wgz.com.antinstal.xmlpraser.ParserWorkerXml;
+import wgz.datatom.com.utillibrary.util.LogUtil;
 
 import static java.util.Collections.sort;
 
@@ -109,7 +110,7 @@ public class OrderFragment extends Fragment {
 
                 Intent intent = new Intent();
                 intent.putExtra("workID",workid.getText().toString());
-                intent.putExtra("order",true);
+                intent.putExtra("order","true");
                 intent.setClass(getActivity(),MsgActivity.class);
                 startActivityForResult(intent,0);
 
@@ -121,7 +122,7 @@ public class OrderFragment extends Fragment {
                 TextView workid = (TextView) view.findViewById(R.id.work_id);
 
                 Intent intent = new Intent();
-                intent.putExtra("order",true);
+                intent.putExtra("order","true");
                 intent.putExtra("workID",workid.getText().toString());
 
                intent.setClass(getActivity(),MsgActivity.class);
@@ -178,7 +179,7 @@ public class OrderFragment extends Fragment {
                     public void onDataSuccessfully(Object data) {
                         List<Map<String, Object>> list1 = new ArrayList<Map<String,Object>>();
                         list1 = (List<Map<String, Object>>) data;
-                        Log.i("xml","list222==="+list1.toString());
+                        //Log.i("xml","list222==="+list1.toString());
 
                         sort(list1);
                         untuotoulv.setAdapter(new OrderAdapter(list1,getActivity(),2));
@@ -194,25 +195,9 @@ public class OrderFragment extends Fragment {
 
             @Override
             public void onFailure(retrofit2.Call<ResponseBody> call, Throwable t) {
-
+                LogUtil.e("error"+t.toString());
             }
         });
-
-
-       /* OkHttpUtils.get().url(app.BASE_URL).addParams("username","18108055465")
-                .addParams("state","2").addParams("sign","97C7F5D5BE3B362093CB0E97EEFF7BD1").build()
-                .execute(new InputStreamCallBack() {
-                    @Override
-                    public void onError(Call call, Exception e, int id) {
-
-                    }
-
-                    @Override
-                    public void onResponse(InputStream response, int id) {
-                        inputStream2 = response;
-
-                    }
-                });*/
     }
 
     private void initData() {
@@ -231,7 +216,7 @@ public class OrderFragment extends Fragment {
                     public void onDataSuccessfully(Object data) {
                         List<Map<String, Object>> list1 = new ArrayList<Map<String,Object>>();
                         list1 = (List<Map<String, Object>>) data;
-                        Log.i("xml","list1111==="+list1.toString());
+                        //Log.i("xml","list1111==="+list1.toString());
                         sort(list1);
                         tuotoulv.setAdapter(new OrderAdapter(list1,getActivity(),1));
                     }

@@ -2,8 +2,10 @@ package wgz.com.antinstal;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -51,6 +53,7 @@ public class MsgActivity extends BaseActivity {
     private String workID, daohangAdd = "";
     private Toolbar toolbar;
     private List<Map<String,Object>> mData;
+    private String errorid="1";
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -80,6 +83,12 @@ public class MsgActivity extends BaseActivity {
 
     @Override
     public void initView() {
+       // toolbar.setTitle("消息详情");
+        Intent intent = getIntent();
+        String flag = intent.getStringExtra("order");
+
+
+
         toolbar = (Toolbar) findViewById(R.id.toolbar_msg);
         orderID = (TextView) findViewById(R.id.id_order_id);
         name = (TextView) findViewById(R.id.id_order_name);
@@ -95,15 +104,20 @@ public class MsgActivity extends BaseActivity {
         unwanchang = (TextView) findViewById(R.id.Tv_unwancheng);
         showinmap = (TextView) findViewById(R.id.Tv_showInMap);
         shopname = (TextView) findViewById(R.id.shopname);
-
-        toolbar.setTitle("订单详情");
+        btnlay = (LinearLayout) findViewById(R.id.btn_layout);
+        if (flag.contains("true")){
+            btnlay.setVisibility(View.GONE);
+        }else {
+            btnlay.setVisibility(View.VISIBLE);
+        }
+        toolbar.setTitle("详情");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         //点击号码拨打电话
         phone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 AlertDialog.Builder dialog = new AlertDialog.Builder(MsgActivity.this);
                 dialog.setTitle("请确认").setMessage("是否拨打电话？").setNegativeButton("取消", null)
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -111,22 +125,10 @@ public class MsgActivity extends BaseActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 Intent dialIntent = new Intent(Intent.ACTION_CALL, Uri
                                         .parse("tel:" + phone.getText().toString()));
-                                if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                                    // TODO: Consider calling
-                                    //    ActivityCompat#requestPermissions
-                                    // here to request the missing permissions, and then overriding
-                                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                    //                                          int[] grantResults)
-                                    // to handle the case where the user grants the permission. See the documentation
-                                    startActivity(dialIntent);
-                                    return;
-                                }
                                 startActivity(dialIntent);
                             }
                         });
                 dialog.show();
-
-
             }
         });
         //点击驾驶员号码拨打电话
@@ -141,21 +143,10 @@ public class MsgActivity extends BaseActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 Intent dialIntent = new Intent(Intent.ACTION_CALL, Uri
                                         .parse("tel:" + phone.getText().toString()));
-                                if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                                    // TODO: Consider calling
-                                    //    ActivityCompat#requestPermissions
-                                    // here to request the missing permissions, and then overriding
-                                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                    //                                          int[] grantResults)
-                                    // to handle the case where the user grants the permission. See the documentation
-                                    startActivity(dialIntent);
-                                    return;
-                                }
                                 startActivity(dialIntent);
                             }
                         });
                 dialog.show();
-
 
 
             }
@@ -165,7 +156,7 @@ public class MsgActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
-                intent.putExtra("endAddress",address.getText().toString());
+                intent.putExtra("endAddress", address.getText().toString());
                 /*intent.setClass(MsgActivity.this,NewMapActivity.class);
                 startActivity(intent);*/
             }
@@ -174,18 +165,18 @@ public class MsgActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
-                intent.putExtra("endAddress",address.getText().toString());
+                intent.putExtra("endAddress", address.getText().toString());
                 /*intent.setClass(MsgActivity.this,NewMapActivity.class);
                 startActivity(intent);*/
             }
         });
         //销单已完成订单
-       /* wancheng.setOnClickListener(new View.OnClickListener() {
+        wancheng.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final EditText inputServer = new EditText(MsgActivity.this);
                 LayoutInflater layoutInflater = LayoutInflater.from(MsgActivity.this);
-                final View view = layoutInflater.inflate(R.layout.dialog_code_remark,null);
+                final View view = layoutInflater.inflate(R.layout.dialog_code_remark, null);
 
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(MsgActivity.this);
@@ -196,55 +187,138 @@ public class MsgActivity extends BaseActivity {
                         EditText mRemark = (EditText) view.findViewById(R.id.id_complate_remark);
                         String remark2 = "";
                         String code2 = "";
-                        if (mRemark.getText()==null){
+                        if (mRemark.getText() == null) {
                             String remark = "---";
-                            String code = mCode.getText().toString().replaceAll( "\\s", "");
+                            String code = mCode.getText().toString().replaceAll("\\s", "");
                             remark2 = remark;
                             code2 = code;
-                        }else {
-                            String code = mCode.getText().toString().replaceAll( "\\s", "");
-                            String remark = mRemark.getText().toString().replaceAll( "\\s", "");
+                        } else {
+                            String code = mCode.getText().toString().replaceAll("\\s", "");
+                            String remark = mRemark.getText().toString().replaceAll("\\s", "");
                             remark2 = remark;
                             code2 = code;
                         }
 
+                        SignMaker sm = new SignMaker();
+                        String sign = sm.getsignCode("type=" + "set", "id=" + workID, "state=" + 1, "code=" + code2, "remark=" + remark2,"username="+getsp2());
 
-
-                        ParserDetilXml pd = new ParserDetilXml("set",workID,"1",null,remark2,code2);
-                        pd.execute();
-                        pd.setOnDataFinishedListener(new OnDataFinishedListener() {
+                        Call<String> call = app.apiService.finishOrder(workID, "set", "1", code2, remark2,getsp2(),sign);
+                        call.enqueue(new Callback<String>() {
                             @Override
-                            public void onDataSuccessfully(Object data) {
-                                Toast.makeText(MsgActivity.this,"操作完成",Toast.LENGTH_SHORT).show();
-                                MsgActivity.this.finish();
+                            public void onResponse(Call<String> call, Response<String> response) {
+                                LogUtil.e("resultStr: " + response.body());
+                                if (response.body().contains("true")) {
+                                    Toast.makeText(MsgActivity.this, "操作完成", Toast.LENGTH_SHORT).show();
+                                    MsgActivity.this.finish();
+                                } else {
+                                    Toast.makeText(MsgActivity.this, "验证码有误", Toast.LENGTH_SHORT).show();
+                                }
+
+
                             }
+
                             @Override
-                            public void onDataFailed() {
-                                Toast.makeText(MsgActivity.this,"验证码有误",Toast.LENGTH_SHORT).show();
-                                //MsgActivity.this.finish();
+                            public void onFailure(Call<String> call, Throwable t) {
+                                LogUtil.e("error");
                             }
                         });
                     }
-                }).setNegativeButton("取消",null);
+                }).setNegativeButton("取消", null);
                 builder.show();
-
-
-
-
-
-
+            }
+        });
+        //销单未完成订单
+        unwanchang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] areas = new String[]{"客户不在家","货物不全","能力不足","不适当的服务条件"
+                ,"支付问题","客户信息不全","不正确或丢失图纸","信息不全","物品错误","物品损失",
+                        "测量不正确","销售错误","安装错误","客户需求的变化","丢失图纸"};
+                AlertDialog ad =new AlertDialog.Builder(MsgActivity.this).setTitle("请选择未完成类型：").setSingleChoiceItems(
+                        areas, 1, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                errorid = which+"";
+                                LogUtil.e("errorid=="+errorid);
+                            }
+                        }).setNegativeButton("取消",null).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        DialogForReason();
+                    }
+                }).show();
+               // DialogForReason();
 
             }
         });
-*/
 
-        Intent intent = getIntent();
-        boolean flag =  intent.getBooleanExtra("order",false);
         msg_lv = (ListView) findViewById(R.id.id_goods_list);
 
         initData();
 
     }
+
+    private String getsp2() {
+        SharedPreferences preferences = getSharedPreferences("autologin", Context.MODE_PRIVATE);
+        String flag = preferences.getString("username", "????");
+        return flag;
+    }
+
+    private void DialogForReason() {
+        final EditText inputServer = new EditText(MsgActivity.this);
+        inputServer.setMinLines(3);
+        AlertDialog.Builder builder = new AlertDialog.Builder(MsgActivity.this);
+        builder.setTitle("未完成原因备注：").setView(inputServer)
+                .setNegativeButton("取消", null);
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+
+                String reason = inputServer.getText().toString().replaceAll( "\\s", "");
+                SignMaker signMaker = new SignMaker();
+                String sign = signMaker.getsignCode2("type="+"set","id="+workID,"state="+2,"username="+getsp2()
+                        ,"remark="+reason,"errorid="+errorid);
+
+
+                Call<String>  call = app.apiService.unFinishOrder(workID,"set","2",reason,errorid,getsp2(),sign);
+                call.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        LogUtil.e("MSgerrorid:"+response.body());
+                        Toast.makeText(MsgActivity.this, "操作完成", Toast.LENGTH_SHORT).show();
+                        MsgActivity.this.finish();
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                LogUtil.e("MSgerror::"+t.toString());
+                    }
+                });
+
+
+                /*ParserDetilXml pd = new ParserDetilXml("set",workID,"2",getsp2(),reason,null);
+                pd.execute();
+                pd.setOnDataFinishedListener(new OnDataFinishedListener() {
+                    @Override
+                    public void onDataSuccessfully(Object data) {
+                        Toast.makeText(MsgActivity.this,"操作完成",Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+
+                    @Override
+                    public void onDataFailed() {
+                        Toast.makeText(MsgActivity.this,"操作完成",Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                });*/
+
+
+            }
+        });
+        builder.show();
+    }
+
+
     public static String formatDouble4(double d) {
         DecimalFormat df = new DecimalFormat("#.00");
 

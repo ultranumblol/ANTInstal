@@ -13,6 +13,7 @@ import java.util.Map;
 import wgz.com.antinstal.bean.Worker;
 import wgz.com.antinstal.util.OnDataFinishedListener;
 import wgz.com.antinstal.util.XmlInputStream;
+import wgz.datatom.com.utillibrary.util.LogUtil;
 
 /**
  * Created by qwerr on 2015/12/24.
@@ -84,7 +85,8 @@ public class ParserWorkerXml extends AsyncTask {
     @Override
     protected void onPostExecute(Object o) {
         List<Map<String, Object>> result = (List<Map<String, Object>>) o;
-        Log.i("xml","result======="+result.size());
+        //Log.i("xml","result======="+result.size());
+        LogUtil.e("result===="+result.toString());
 
         if(result.size()==0){
             onDataFinishedListener.onDataFailed();

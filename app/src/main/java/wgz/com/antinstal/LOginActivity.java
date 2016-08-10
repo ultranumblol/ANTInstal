@@ -58,6 +58,16 @@ public class LoginActivity extends BaseActivity {
     public void initView() {
         String flag = getsp();
         String username = getsp2();
+        if (flag.equals("true")){
+            Intent in = new Intent();
+            in.setClass(LoginActivity.this, HomeActivity.class);
+            in.putExtra("username",username);
+
+
+            finish();
+            startActivity(in);
+
+        }
         loginName.setFocusable(true);
         loginName.setFocusableInTouchMode(true);
         loginName.requestFocus();
@@ -139,6 +149,7 @@ public class LoginActivity extends BaseActivity {
                         savesp();
                     }
                     savesp2();
+                    startActivity(new Intent(LoginActivity.this,HomeActivity.class));
                     finish();
                 }
                 else {
@@ -147,6 +158,7 @@ public class LoginActivity extends BaseActivity {
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
+                LogUtil.e("error:"+ t.toString());
 
             }
         });

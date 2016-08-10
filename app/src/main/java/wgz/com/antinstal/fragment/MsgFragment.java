@@ -1,6 +1,7 @@
 package wgz.com.antinstal.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,7 +9,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -22,6 +25,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import wgz.com.antinstal.MsgActivity;
 import wgz.com.antinstal.R;
 import wgz.com.antinstal.adapter.MsgFmtAdapter;
 import wgz.com.antinstal.app;
@@ -57,12 +61,11 @@ public class MsgFragment extends Fragment {
         String username = getsp2();
         String sign = signMaker.getsign(username,0);
 
+        LogUtil.e("username:"+username+"sign:"+sign);
         Call<ResponseBody> call = app.apiService.getWorkXML(username,"0",sign);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                LogUtil.e("1222123213213213213"+response.body());
-
                 inputStream=response.body().byteStream();
                 ParserWorkerXml pw = new ParserWorkerXml(inputStream);
                 pw.execute();
@@ -77,18 +80,28 @@ public class MsgFragment extends Fragment {
                     @Override
                     public void onDataFailed() {
                         msglv.setAdapter(new MsgFmtAdapter(listDATE,getContext()));
-                        //Toast.makeText(getActivity(),"没有相关业务!",Toast.LENGTH_SHORT).show();
+                        LogUtil.e("error"+"onDataFailed");
                     }
                 });
             }
-
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                    LogUtil.e("error"+t.toString());
             }
         });
 
+     /*   Call<String> call1 = app.apiService.getWorkXMLStr("13739472497","0",sign);
+        call1.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                LogUtil.e("body:::"+response.body().toString());
+            }
 
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                LogUtil.e("error"+t.toString());
+            }
+        });*/
 
 
 
@@ -102,7 +115,19 @@ public class MsgFragment extends Fragment {
     private void initview(View view) {
         msglv = (ListView) view .findViewById(R.id.msg_lv);
         refreshableView = (RefreshableView) view.findViewById(R.id.refreshable_view);
+        msglv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                TextView workid = (TextView) view.findViewById(R.id.order_ID);
+                Intent intent = new Intent();
+                intent.putExtra("workID",workid.getText().toString());
+                intent.putExtra("order","false");
+                intent.setClass(getActivity(),MsgActivity.class);
+
+                startActivityForResult(intent,3);
+            }
+        });
         refreshableView.setOnRefreshListener(new RefreshableView.PullToRefreshListener() {
             @Override
             public void onRefresh() {
