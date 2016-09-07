@@ -1,10 +1,12 @@
 package wgz.com.antinstal.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
@@ -20,9 +22,11 @@ public class MsgFmtAdapter extends BaseAdapter {
     private List<Map<String,Object>> data;
     private LayoutInflater inflater;
     private Context context;
+    private List<Map<String,Object>> Updatedata;
 
-    public MsgFmtAdapter(List<Map<String, Object>> data, Context context) {
+    public MsgFmtAdapter(List<Map<String, Object>> data,List<Map<String,Object>> Updatedata, Context context) {
         this.data = data;
+        this.Updatedata =Updatedata;
         this.context = context;
         inflater = LayoutInflater.from(context);
     }
@@ -51,6 +55,7 @@ public class MsgFmtAdapter extends BaseAdapter {
             viewHolder.workID = (TextView) convertView.findViewById(R.id.msg_workID);
             viewHolder.workerName = (TextView) convertView.findViewById(R.id.msg_workerName);
             viewHolder.orderID = (TextView) convertView.findViewById(R.id.order_ID);
+            viewHolder.rootview = (RelativeLayout) convertView.findViewById(R.id.rootview);
             convertView.setTag(viewHolder);
 
 
@@ -58,10 +63,40 @@ public class MsgFmtAdapter extends BaseAdapter {
             viewHolder= (ViewHolder) convertView.getTag();
 
         }
+
+
         Map<String,Object> map = data.get(position);
-        viewHolder.workID.setText(map.get("aznumber").toString());
+
+
+        try{
+            for (int i = 0 ; i <Updatedata.size(); i ++){
+
+                if (map.get("aznumber").toString().equals(Updatedata.get(i).get("ordernumber"))){
+                    viewHolder.workID.setText(map.get("aznumber").toString());
+                    viewHolder.workerName.setText(map.get("workerName").toString());
+                    viewHolder.orderID.setText(map.get("workID").toString());
+                    viewHolder.rootview.setBackgroundColor(Color.parseColor("#ff5151"));
+                    return convertView;
+
+                }else{
+                    viewHolder.workID.setText(map.get("aznumber").toString());
+                    viewHolder.workerName.setText(map.get("workerName").toString());
+                    viewHolder.orderID.setText(map.get("workID").toString());
+                    return convertView;
+
+                }
+            }
+
+        }catch (Exception e){
+            viewHolder.workID.setText(map.get("aznumber").toString());
+            viewHolder.workerName.setText(map.get("workerName").toString());
+            viewHolder.orderID.setText(map.get("workID").toString());
+        }
+
+
+       /* viewHolder.workID.setText(map.get("aznumber").toString());
         viewHolder.workerName.setText(map.get("workerName").toString());
-        viewHolder.orderID.setText(map.get("workID").toString());
+        viewHolder.orderID.setText(map.get("workID").toString());*/
 
 
 
@@ -70,6 +105,7 @@ public class MsgFmtAdapter extends BaseAdapter {
     class ViewHolder{
         private TextView workID,orderID;
         private TextView workerName;
+        private RelativeLayout rootview;
 
 
     }

@@ -71,10 +71,17 @@ public interface ApiService {
     Call<String> updateGPS(@Field("userphone") String userphone,
                            @Field("Longitude") String longitude,
                            @Field("latitude") String latitude);
-
+    //获取错误信息
     @GET("http://erp.chinaant.com/AppServiceError.aspx")
     Call<ResponseBody> getError();
 
+
+
+
+    //获取错误信息
+    @FormUrlEncoded
+    @POST("http://erp.chinaant.com/AppServiceError.aspx")
+    Call<ResponseBody> getError2(@Field("pid") String pid);
 
     @FormUrlEncoded
     @POST("http://erp.chinaant.com/AppInstallationEDI.aspx")
@@ -95,5 +102,21 @@ public interface ApiService {
                                  @Field("errorid") String errorid,
                                  @Field("username") String username,
                                  @Field("sign") String sign);
+
+
+
+    @FormUrlEncoded
+    @POST("http://erp.chinaant.com/appmessageinfo.aspx")
+    Call<ResponseBody> getMEssageInfo(@Field("type") String type,
+                                      @Field("username") String username,
+                                      @Field("sign") String sign
+    );
+
+    @FormUrlEncoded
+    @POST("http://erp.chinaant.com/appmessageinfo.aspx")
+    Call<String> setMEssageInfo(@Field("type") String type,
+                                      @Field("ordernumber") String ordernumber,
+                                      @Field("sign") String sign
+    );
 
 }

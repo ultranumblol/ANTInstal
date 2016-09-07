@@ -17,7 +17,7 @@
     <application
         android:name=".app"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/appicon"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -54,6 +54,7 @@
             android:theme="@style/AppTheme.NoActionBar_notrans"
             ></activity>
         <service android:name=".service.GetGPSService"></service>
+        <service android:name=".service.MsgService"/>
     </application>
 
 </manifest>

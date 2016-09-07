@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textSize="16sp"
+    android:layout_marginLeft="18dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="6dp"
+    android:textColor="@color/black"
+    android:text="失败原因"
+    android:id="@+id/faild_reason"
+    />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/reason_id"
+        android:visibility="gone"
+        />
+</LinearLayout>

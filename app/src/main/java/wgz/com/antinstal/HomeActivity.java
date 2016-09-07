@@ -20,6 +20,7 @@ import wgz.com.antinstal.fragment.MsgFragment;
 import wgz.com.antinstal.fragment.OrderFragment;
 import wgz.com.antinstal.fragment.PersonFragment;
 import wgz.com.antinstal.service.GetGPSService;
+import wgz.com.antinstal.service.MsgService;
 import wgz.com.antinstal.view.CustomViewPager;
 
 public class HomeActivity extends BaseActivity {
@@ -62,6 +63,7 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     public void initView() {
+        openservice();
         startService(new Intent(HomeActivity.this, GetGPSService.class));
         toolbar.setTitle("业务消息");
         msgFragment = new MsgFragment();
@@ -83,7 +85,9 @@ public class HomeActivity extends BaseActivity {
         viewpager.setCurrentItem(0);
         bar1.setImageResource(R.drawable.foot_letter_pressed);
     }
-
+    private void openservice() {
+        startService(new Intent(this, MsgService.class));
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
