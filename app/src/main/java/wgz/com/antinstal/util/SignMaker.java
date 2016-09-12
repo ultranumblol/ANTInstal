@@ -103,7 +103,8 @@ public class SignMaker {
         String seprater = "&";
         result=pass.get(0)+seprater+pass.get(1)+seprater+pass.get(2)+seprater+pass.get(3)+seprater+pass.get(4)+seprater+pass.get(5);
         String sign1=md5Util.MD5(result);
-        Log.i("xml", "加密内容：" + result + "加密后" + sign1);
+        //Log.i("xml", "加密内容：" + result + "加密后" + sign1);
+        LogUtil.e("加密内容：" + result + "加密后" + sign1);
         return sign1;
     }
     public String getsignCode2(String type,String id,String state,String username,String remark,String errorid){

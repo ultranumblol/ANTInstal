@@ -76,13 +76,10 @@ public class MsgFmtAdapter extends BaseAdapter {
                     viewHolder.workerName.setText(map.get("workerName").toString());
                     viewHolder.orderID.setText(map.get("workID").toString());
                     viewHolder.rootview.setBackgroundColor(Color.parseColor("#ff5151"));
-                    return convertView;
-
                 }else{
                     viewHolder.workID.setText(map.get("aznumber").toString());
                     viewHolder.workerName.setText(map.get("workerName").toString());
                     viewHolder.orderID.setText(map.get("workID").toString());
-                    return convertView;
 
                 }
             }

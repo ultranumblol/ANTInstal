@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,8 +23,11 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jude.easyrecyclerview.EasyRecyclerView;
+
 import org.dom4j.DocumentException;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +37,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import wgz.com.antinstal.adapter.ZysxAdapter;
 import wgz.com.antinstal.base.BaseActivity;
 import wgz.com.antinstal.base.BaseFragment;
 
@@ -42,6 +47,7 @@ import wgz.datatom.com.utillibrary.util.LogUtil;
 
 public class MsgActivity extends BaseActivity {
     private ListView msg_lv;
+    private ListView zysx_lv;
     private LinearLayout btnlay;
     private TextView title;
     //private TextView wancheng, unwanchang, showinmap;
@@ -49,9 +55,11 @@ public class MsgActivity extends BaseActivity {
     private String workID,orderID2, detilID = "";
     private Toolbar toolbar;
     private List<Map<String,Object>> mData;
+    private List<Map<String,Object>> mData2 = new ArrayList<>();
     private List<Map<String,Object>> mErrorData;
     private String errorid="1";
-
+    //private EasyRecyclerView zysx_lv;
+    //private ZysxAdapter adapter;
     List<Map<String,Object>> test2 = new ArrayList<>();
     List<Map<String,Object>> shibai2 = new ArrayList<>();
     List<Map<String,Object>> buwanzheng2 = new ArrayList<>();
@@ -97,7 +105,8 @@ public class MsgActivity extends BaseActivity {
         String flag = intent.getStringExtra("order");
         orderID2 = intent.getStringExtra("orderID");
 
-
+        zysx_lv = (ListView) findViewById(R.id.id_zysx_list);
+        //zysx_lv = (EasyRecyclerView) findViewById(R.id.id_zysx_list);
         toolbar = (Toolbar) findViewById(R.id.toolbar_msg);
         orderID = (TextView) findViewById(R.id.id_order_id);
         name = (TextView) findViewById(R.id.id_order_name);
@@ -172,8 +181,13 @@ public class MsgActivity extends BaseActivity {
         });
 
         msg_lv = (ListView) findViewById(R.id.id_goods_list);
-
+       /* zysx_lv.setLayoutManager(new LinearLayoutManager(this));
+        zysx_lv.setAdapter(adapter = new ZysxAdapter(this));*/
         initData();
+
+
+
+
 
     }
     private void yiwanchengxiaodan(View v){
@@ -204,7 +218,7 @@ public class MsgActivity extends BaseActivity {
 
                 SignMaker sm = new SignMaker();
                 String sign = sm.getsignCode("type=" + "set", "id=" + detilID, "state=" + 1, "code=" + code2, "remark=" + remark2,"username="+getsp2());
-
+                LogUtil.e("finish :" + "sign :" +sign);
                 Call<String> call = app.apiService.finishOrder(detilID, "set", "1", code2, remark2,getsp2(),sign);
                 call.enqueue(new Callback<String>() {
                     @Override
@@ -216,8 +230,6 @@ public class MsgActivity extends BaseActivity {
                         } else {
                             Toast.makeText(MsgActivity.this, "验证码有误", Toast.LENGTH_SHORT).show();
                         }
-
-
                     }
 
                     @Override
@@ -350,11 +362,16 @@ public class MsgActivity extends BaseActivity {
             }
         });
 
+
+
+
+
+
         Call<ResponseBody>  call = app.apiService.getMSGDetil(workID,"get",sign);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                PraserXml px = new PraserXml();
+                final PraserXml px = new PraserXml();
                 try {
 
                     mData = px.prase(response.body().byteStream());
@@ -370,8 +387,43 @@ public class MsgActivity extends BaseActivity {
                     String money2 = formatDouble4(money3);
                     money.setText(money2);
                     azreservation.setText(mData.get(0).get("azreservation").toString());
-                    delivery.setText(mData.get(0).get("delivery").toString());
-                    servType.setText(mData.get(0).get("servertype").toString());
+                    Call<ResponseBody> call2 = app.apiService.getzysxInfo(mData.get(0).get("number").toString());
+                    call2.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            try {
+                                mData2 = px.prase(response.body().byteStream());
+                                LogUtil.e("mdata2:"+mData2.toString());
+
+                                zysx_lv.setAdapter(new SimpleAdapter(MsgActivity.this,mData2,R.layout.item_zysx,new String[]{"code","selector","text"},new int[]{R.id.id_zysxcode,R.id.id_zysx_select,R.id.id_zysx_text}));
+
+                            } catch (DocumentException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                        }
+                    });
+
+                    try {
+                        delivery.setText(mData.get(0).get("delivery").toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        String pilophone1 = "---";
+                        delivery.setText(pilophone1);
+                    }
+
+
+                    try {
+                        servType.setText(mData.get(0).get("servertype").toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        String pilophone1 = mData.get(0).get("servicestype").toString();
+                        servType.setText(pilophone1);
+                    }
                     try {
                         String pilophone1 = mData.get(0).get("pilot").toString();
                         pilot.setText(pilophone1);
@@ -400,6 +452,9 @@ public class MsgActivity extends BaseActivity {
                         String pilophone1 = "---";
                         shopname.setText(pilophone1);
                     }
+
+
+
 
 
                     msg_lv.setAdapter(new SimpleAdapter(MsgActivity.this, mData, R.layout.goods_lv_item, new String[]{"name1", "quantity", "goodsmoney", "servicestype","id"},
@@ -433,7 +488,7 @@ public class MsgActivity extends BaseActivity {
                         }
                         });
 
-
+                    //adapter.addAll(mData);
 
 
                 } catch (DocumentException e) {
