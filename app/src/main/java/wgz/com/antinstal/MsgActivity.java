@@ -224,7 +224,7 @@ public class MsgActivity extends BaseActivity {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         LogUtil.e("resultStr: " + response.body());
-                        if (response.body().contains("true")) {
+                        if (!response.body().isEmpty()&&response.body().contains("true")) {
                             Toast.makeText(MsgActivity.this, "操作完成", Toast.LENGTH_SHORT).show();
                             MsgActivity.this.finish();
                         } else {
@@ -308,8 +308,17 @@ public class MsgActivity extends BaseActivity {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
                         LogUtil.e("MSgCallback :"+response.body());
-                        Toast.makeText(MsgActivity.this, "操作完成", Toast.LENGTH_SHORT).show();
-                        MsgActivity.this.finish();
+                        try {
+                            if (response.body().contains("true")){
+                                Toast.makeText(MsgActivity.this, "操作完成", Toast.LENGTH_SHORT).show();
+                                MsgActivity.this.finish();
+                            }else  Toast.makeText(MsgActivity.this, "错误！", Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(MsgActivity.this, "服务器错误！", Toast.LENGTH_SHORT).show();
+                        }
+
+
                     }
 
                     @Override
@@ -376,9 +385,20 @@ public class MsgActivity extends BaseActivity {
 
                     mData = px.prase(response.body().byteStream());
                     LogUtil.e("mData=="+mData.toString());
-                    detilID = mData.get(0).get("id").toString();
+
+                    try {
+                        detilID = mData.get(0).get("id").toString();
+                    } catch (Exception e) {
+                        detilID="0000";
+                        e.printStackTrace();
+                    }
                     orderID.setText(mData.get(0).get("aznumber").toString());
-                    name.setText(mData.get(0).get("name").toString());
+                    try {
+                        name.setText(mData.get(0).get("name").toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        name.setText("---");
+                    }
                     phone.setText(mData.get(0).get("phone1").toString());
 
                     address.setText(mData.get(0).get("address").toString());
@@ -387,7 +407,13 @@ public class MsgActivity extends BaseActivity {
                     String money2 = formatDouble4(money3);
                     money.setText(money2);
                     azreservation.setText(mData.get(0).get("azreservation").toString());
-                    Call<ResponseBody> call2 = app.apiService.getzysxInfo(mData.get(0).get("number").toString());
+                    Call<ResponseBody> call2 = null;
+                    try {
+                        call2 = app.apiService.getzysxInfo(mData.get(0).get("number").toString());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        call2 = app.apiService.getzysxInfo(mData.get(0).get("aznumber").toString());
+                    }
                     call2.enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -492,6 +518,7 @@ public class MsgActivity extends BaseActivity {
 
 
                 } catch (DocumentException e) {
+                    LogUtil.e("213");
                     e.printStackTrace();
                 }
             }
