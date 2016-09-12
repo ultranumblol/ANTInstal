@@ -202,7 +202,7 @@ public class OrderFragment extends Fragment {
 
     private void initData() {
         SignMaker signMaker = new SignMaker();
-        String sign =signMaker.getsign(getsp2(),2);
+        String sign =signMaker.getsign(getsp2(),1);
 
         retrofit2.Call<ResponseBody> call = app.apiService.getWorkXML(getsp2(),"1",sign);
         call.enqueue(new Callback<ResponseBody>() {

@@ -103,7 +103,8 @@ public class SignMaker {
         String seprater = "&";
         result=pass.get(0)+seprater+pass.get(1)+seprater+pass.get(2)+seprater+pass.get(3)+seprater+pass.get(4)+seprater+pass.get(5);
         String sign1=md5Util.MD5(result);
-        Log.i("xml", "加密内容：" + result + "加密后" + sign1);
+        //Log.i("xml", "加密内容：" + result + "加密后" + sign1);
+        LogUtil.e("加密内容：" + result + "加密后" + sign1);
         return sign1;
     }
     public String getsignCode2(String type,String id,String state,String username,String remark,String errorid){
@@ -123,10 +124,31 @@ public class SignMaker {
         String seprater = "&";
         result=pass.get(0)+seprater+pass.get(1)+seprater+pass.get(2)+seprater+pass.get(3)+seprater+pass.get(4)+seprater+pass.get(5);
         String sign1=md5Util.MD5(result);
-        Log.i("xml", "加密内容：" + result + "加密后" + sign1);
+        // Log.i("xml", "加密内容：" + result + "加密后" + sign1);
+        LogUtil.e("加密内容：" + result + "加密后" + sign1);
         return sign1;
     }
+    public String getsignCode3(String type,String id,String state,String username,String remark,String errorid,String code){
+        MD5Util md5Util = new MD5Util();
+        ArrayList<String> pass = new ArrayList<String>();
 
+        pass.add(type);
+        pass.add(id);
+        pass.add(state);
+        pass.add(username);
+        pass.add(remark);
+        pass.add(errorid);
+        pass.add(code);
+        Log.i("xml", "===========" + pass.toString());
+        Collections.sort(pass);//对数组里的元素按首字母排序
+        String result = "";
+        String seprater = "&";
+        result=pass.get(0)+seprater+pass.get(1)+seprater+pass.get(2)+seprater+pass.get(3)+seprater+pass.get(4)+seprater+pass.get(5)+seprater+pass.get(6);
+        String sign1=md5Util.MD5(result);
+        // Log.i("xml", "加密内容：" + result + "加密后" + sign1);
+        LogUtil.e("加密内容：" + result + "加密后" + sign1);
+        return sign1;
+    }
     public String getsign(String type,String id){
         MD5Util md5Util = new MD5Util();
         ArrayList<String> pass = new ArrayList<String>();
@@ -141,7 +163,8 @@ public class SignMaker {
             result=pass.get(0)+seprater+pass.get(1);
         }
         String sign1=md5Util.MD5(result);
-        Log.i("xml", "加密内容：" + result + "加密后" + sign1);
+        LogUtil.e("加密内容：" + result + "加密后" + sign1);
+        //Log.i("xml", "加密内容：" + result + "加密后" + sign1);
         return sign1;
 
 

@@ -110,16 +110,10 @@ public class NewMapActivity extends BaseActivity implements OnGetRoutePlanResult
     @Override
     public void initView() {
         this.context = this;
-        initview();
-
-        if (isOPen(this)){
+            initview();
             initLocation();
             initsearch();
-        }if (!isOPen(this)){
-            Toast.makeText(this,"请打开GPS定位功能！",Toast.LENGTH_LONG).show();
-            openGPS(this);
 
-        }
     }
 
     private void initsearch() {

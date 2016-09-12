@@ -43,7 +43,7 @@ public class MainActivity extends BaseActivity {
        // toolbar.setTitle("警务APP");
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(Color.WHITE);
-        toolbar.setTitle("警务APP");
+        toolbar.setTitle(" ");
         //StatusBarUtil.setColor(this,R.color.colorPrimaryDark);
         // StatusBarUtil.setTranslucent(this,100);
         afterCreat();
