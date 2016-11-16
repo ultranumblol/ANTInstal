@@ -88,12 +88,8 @@ public class HomeActivity extends BaseActivity {
     private void openservice() {
         startService(new Intent(this, MsgService.class));
     }
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
 
-    }
+
 
     @OnClick({R.id.bar1, R.id.bar2, R.id.bar3, R.id.bar4})
     public void onClick(View view) {

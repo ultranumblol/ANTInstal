@@ -10,9 +10,9 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
-import wgz.com.antinstal.exception.LocalFileHandler;
 import wgz.com.antinstal.service.ApiService;
 import wgz.com.antinstal.service.GetGPSService;
+import wgz.com.antinstal.service.GetGPSService2;
 import wgz.datatom.com.utillibrary.util.LogUtil;
 import wgz.datatom.com.utillibrary.util.ToastUtil;
 
@@ -35,7 +35,8 @@ public class app extends Application {
         //配置程序异常退出处理
         //Thread.setDefaultUncaughtExceptionHandler(new LocalFileHandler(this));
 
-
+        //startService(new Intent(getApplicationContext(), GetGPSService.class));
+        //startService(new Intent(getApplicationContext(), GetGPSService2.class));
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(ScalarsConverterFactory.create())
