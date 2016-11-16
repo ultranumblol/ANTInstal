@@ -14,6 +14,8 @@
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FIND_LOCATION" />
     <application
         android:name=".app"
         android:allowBackup="true"
@@ -24,8 +26,6 @@
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="WCmDhHIG3V03tobVkEkZ0PS3pl1ttI5C" />
-
-
         <activity
             android:name=".MainActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
@@ -54,7 +54,7 @@
             android:theme="@style/AppTheme.NoActionBar_notrans"
             ></activity>
         <service android:name=".service.GetGPSService"></service>
+        <service android:name=".service.GetGPSService2"></service>
         <service android:name=".service.MsgService"/>
     </application>
-
 </manifest>

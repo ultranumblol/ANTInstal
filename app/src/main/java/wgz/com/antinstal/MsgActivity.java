@@ -217,9 +217,11 @@ public class MsgActivity extends BaseActivity {
                 }
 
                 SignMaker sm = new SignMaker();
-                String sign = sm.getsignCode("type=" + "set", "id=" + detilID, "state=" + 1, "code=" + code2, "remark=" + remark2,"username="+getsp2());
+                String number1 = mData.get(0).get("number").toString();
+
+                String sign = sm.getsignCode("type=" + "set", "id=" + detilID, "state=" + 1, "code=" + code2, "remark=" + remark2,"username="+getsp2(),"number="+number1);
                 LogUtil.e("finish :" + "sign :" +sign);
-                Call<String> call = app.apiService.finishOrder(detilID, "set", "1", code2, remark2,getsp2(),sign);
+                Call<String> call = app.apiService.finishOrder(detilID, "set", "1", code2, remark2,getsp2(),number1,sign);
                 call.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
@@ -297,13 +299,15 @@ public class MsgActivity extends BaseActivity {
 
                 String reason = inputServer.getText().toString().replaceAll( "\\s", "");
                 SignMaker signMaker = new SignMaker();
+                String number1 = mData.get(0).get("number").toString();
                 String sign = signMaker.getsignCode2("type="+"set","id="+detilID,"state="+2,"username="+getsp2()
-                        ,"remark="+reason,"errorid="+errorid);
+                        ,"remark="+reason,"errorid="+errorid,"number="+number1);
 
-                String sign2 = signMaker.getsignCode3("type="+"set","id="+detilID,"state="+2,"username="+getsp2()
-                        ,"remark="+reason,"errorid="+errorid,"code=123");
-                LogUtil.e("url :: detilID :"+detilID+" reason :"+ reason+" username : "+getsp2() +" errorid :"+errorid +" sign :" +sign );
-                Call<String>  call = app.apiService.unFinishOrder(detilID,"set","2",reason,errorid,getsp2(),sign);
+
+
+
+                //LogUtil.e("url :: detilID :"+detilID+" reason :"+ reason+" username : "+getsp2() +" errorid :"+errorid +" sign :" +sign );
+                Call<String>  call = app.apiService.unFinishOrder(detilID,"set","2",reason,errorid,getsp2(),number1,sign);
                 call.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {

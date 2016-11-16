@@ -67,10 +67,10 @@ public interface ApiService {
 
     //上传gps
     @FormUrlEncoded
-    @POST("http://wuliu.chinaant.com/shangchuanGPS")
-    Call<String> updateGPS(@Field("userphone") String userphone,
-                           @Field("Longitude") String longitude,
-                           @Field("latitude") String latitude);
+    @POST("http://wuliu.chinaant.com/gpsinfo.aspx")
+    Call<String> updateGPS(@Field("username") String username,
+                           @Field("jingdu") String jingdu,
+                           @Field("weidu") String weidu);
     //获取错误信息
     @GET("http://wuliu.chinaant.com/AppServiceError.aspx")
     Call<ResponseBody> getError();
@@ -102,6 +102,7 @@ public interface ApiService {
                              @Field("code") String code,
                              @Field("remark") String remark,
                              @Field("username") String username,
+                             @Field("number") String number,
                              @Field("sign") String sign);
 
     /**
@@ -123,6 +124,7 @@ public interface ApiService {
                              @Field("code") String code,
                              @Field("remark") String remark,
                              @Field("username") String username,
+                              @Field("number") String number,
                              @Field("sign") String sign);
 
     /**
@@ -144,6 +146,7 @@ public interface ApiService {
                                  @Field("remark") String remark,
                                  @Field("errorid") String errorid,
                                  @Field("username") String username,
+                                 @Field("number") String number,
                                  @Field("sign") String sign);
 
 
